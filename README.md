@@ -1,9 +1,9 @@
 # vit_receipt
 Receipt reader and recorder using PaliGemma 2 Mix. Reads all images from a folder, analysing it and returning a csv file for auditing purposes. 
-
+https://github.com/walterkwong/vit_receipt
 ## Installation
 ```bash
-git clone https://github.com/yourusername/vis_receipt.git
+git clone https://github.com/walterkwong/vit_receipt
 cd vis_receipt
 pip install .
 ```

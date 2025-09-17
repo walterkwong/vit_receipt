@@ -1,4 +1,4 @@
-# vit_receipt
+# ViT Receipt Recorder
 Receipt reader and recorder using PaliGemma 2 Mix. Reads all images from a folder, analysing it and returning a csv file for auditing purposes. 
 
 ## Installation

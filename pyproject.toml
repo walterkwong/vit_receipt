@@ -1,0 +1,17 @@
+[project]
+name = "vis-receipt"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "bitsandbytes>=0.47.0",
+    "easygui>=0.98.3",
+    "gradio>=5.46.0",
+    "matplotlib>=3.10.6",
+    "pillow>=11.3.0",
+    "ruff>=0.13.0",
+    "torch>=2.8.0",
+    "torchvision>=0.23.0",
+    "transformers>=4.56.1",
+]

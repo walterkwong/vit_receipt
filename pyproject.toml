@@ -5,9 +5,11 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "accelerate>=1.10.1",
     "bitsandbytes>=0.47.0",
     "easygui>=0.98.3",
     "gradio>=5.46.0",
+    "huggingface-hub[cli]>=0.35.0",
     "matplotlib>=3.10.6",
     "pillow>=11.3.0",
     "ruff>=0.13.0",

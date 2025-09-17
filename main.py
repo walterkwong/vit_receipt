@@ -56,7 +56,7 @@ def main():
 
     processor = PaliGemmaProcessor.from_pretrained(model_id)
 
-    results = {"Date": [], "Payee": [], "Total Amount": [], "Category": []}
+    results = {"Date": [], "Payee": [], "Total Amount": [], "Category": [], "File": []}
 
     for file_path in files:
         image = Image.open(file_path)
@@ -71,6 +71,7 @@ def main():
         results["Payee"].append(payee if payee else "N/A")
         results["Total Amount"].append(total_amount if total_amount else 0.0)
         results["Category"].append(category if category else "Other")
+        results["File"].append(os.path.basename(file_path))
 
     # Optionally, convert results to a DataFrame and save
     df = pd.DataFrame(results)

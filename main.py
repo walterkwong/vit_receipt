@@ -1,24 +1,24 @@
 import torch
-import pandas as pd
-from transformers import (
-    PaliGemmaForConditionalGeneration,
-    PaliGemmaProcessor,
-    BitsAndBytesConfig,
-)
 from PIL import Image
-
-from image_process import ensure_rgb
+import os
+import pandas as pd
+from pathlib import Path
+from image_process import ensure_rgb, image_enhance
 from extraction import extract_total_amount
 from extraction import (
     extract_receipt_date,
     categorize_goods,
     extract_payee,
 )
-import os
-from pathlib import Path
+from transformers import AutoModel, AutoTokenizer, AutoProcessor
+
 import easygui
 
 def prompt_folder():
+    '''
+    Prompt the user to select a folder using a GUI dialog. If easygui is not available, fall back to console input.
+    '''
+
     try:
         folder_selected = easygui.diropenbox("Select the folder with receipt images here:")
         return folder_selected
@@ -27,45 +27,46 @@ def prompt_folder():
         return folder_selected
 
 def main():
+    # Prompt user to select folder
     folder_selected = prompt_folder()
     if not folder_selected or not Path(folder_selected).is_dir():
         print("Invalid or no folder selected.")
         return
 
+    # Gather image files from the selected folder
     image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tiff")
     files = [
         os.path.join(folder_selected, f)
         for f in os.listdir(folder_selected)
         if f.lower().endswith(image_extensions)
     ]
-
     if not files:
         print("No image files found in the selected folder.")
         return
+    files.sort() 
 
+    # Load model, tokenizer, and processor
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    model_id = "google/paligemma2-3b-pt-224"
-    bnb_config = BitsAndBytesConfig(
-        load_in_4bit=True,
-        llm_int8_threshold=6.0,
-    )
+    print(f"Using device: {device}")
+    model_id = "openbmb/MiniCPM-V-4_5-int4"
 
-    model = PaliGemmaForConditionalGeneration.from_pretrained(
-        model_id, quantization_config=bnb_config
-    ).eval()
-
-    processor = PaliGemmaProcessor.from_pretrained(model_id)
+    model = AutoModel.from_pretrained(model_id, trust_remote_code=True, attn_implementation='sdpa', dtype=torch.bfloat16).eval().to(device)
+    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
+    processor = AutoProcessor.from_pretrained(model_id, use_fast=False, trust_remote_code=True)
 
     results = {"Date": [], "Payee": [], "Total Amount": [], "Category": [], "File": []}
 
+    # Process each image file
     for file_path in files:
+        print(f"\n\nProcessing file: {file_path}")
         image = Image.open(file_path)
         image = ensure_rgb(image)
+        image = image_enhance(image)
 
-        date = extract_receipt_date(image, device, model, processor)
-        payee = extract_payee(image, device, model, processor)
-        total_amount = extract_total_amount(image, device, model, processor)
-        category = categorize_goods(image, device, model, processor)
+        date = extract_receipt_date(image, model, tokenizer, processor)
+        payee = extract_payee(image, model, tokenizer, processor)
+        total_amount = extract_total_amount(image, model, tokenizer, processor)
+        category = categorize_goods(image, model, tokenizer, processor)
 
         results["Date"].append(date if date else "N/A")
         results["Payee"].append(payee if payee else "N/A")
@@ -73,7 +74,7 @@ def main():
         results["Category"].append(category if category else "Other")
         results["File"].append(os.path.basename(file_path))
 
-    # Optionally, convert results to a DataFrame and save
+    # Save results to CSV
     df = pd.DataFrame(results)
     output_path = os.path.join(folder_selected, "output.csv")
     df.to_csv(output_path, index=False)

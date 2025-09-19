@@ -2,6 +2,8 @@
 
 A Vision Transformer specialised in reading and recording receipts using MiniCPM-V-4_5-int4. Automatically processes all images in a folder, analyzes them, and generates a CSV file for easy auditing tasks.
 
+GPU Highly Recommended.
+
 ## Installation
 
 ```bash
@@ -20,6 +22,6 @@ openbmb/MiniCPM-V-4_5-int4
     ```
 
 **Note:**  
-The first run will download the model (~5GB). Ensure you have sufficient disk space and a stable internet connection. Also, this is a very immature project solely for personal use, but do let me know if you want me to work on this project. 
+The first run will download the model (~6.54 GB). Ensure you have sufficient disk space and a stable internet connection. Also, this is a very immature project solely for personal use, but do let me know if you want me to work on this project. 
 
 Model used: openbmb/MiniCPM-V-4_5-int4

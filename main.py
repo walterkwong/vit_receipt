@@ -4,7 +4,7 @@ import os
 import pandas as pd
 from pathlib import Path
 from image_process import ensure_rgb, image_enhance
-from extraction import extract_total_amount
+from extraction import extract_total_cost
 from extraction import (
     extract_receipt_date,
     categorize_goods,
@@ -65,7 +65,7 @@ def main():
 
         date = extract_receipt_date(image, model, tokenizer, processor)
         payee = extract_payee(image, model, tokenizer, processor)
-        total_amount = extract_total_amount(image, model, tokenizer, processor)
+        total_amount = extract_total_cost(image, model, tokenizer, processor)
         category = categorize_goods(image, model, tokenizer, processor)
 
         results["Date"].append(date if date else "N/A")

@@ -36,14 +36,14 @@ def extract_payee(image: Image.Image, model, tokenizer, processor) -> str:
     return answer
 
 
-def extract_total_amount(image: Image.Image, model, tokenizer, processor) -> Optional[float]:
+def extract_total_cost(image: Image.Image, model, tokenizer, processor) -> Optional[float]:
     '''
-    Extracts the total amount from a receipt image using the provided model, tokenizer, and processor.
+    Extracts the total cost from a receipt image using the provided model, tokenizer, and processor.
     Input: PIL Image, model, tokenizer, processor
     Output: Total amount as a float or None if not found
     '''
 
-    question = "what is the total amount of money used? answer in numbers only."
+    question = "what is the total cost in the receipt? answer in numbers only."
     answer = ask_model(image, question, model, tokenizer, processor)
     print(f"Answer from model: {answer}")
     try:
@@ -64,7 +64,7 @@ def categorize_goods(image: Image.Image, model, tokenizer, processor) -> str:
     Output: Category as a string
     '''
 
-    question = "what is the categorise the goods/services in the receipt? answer 1 for Entertainment/Food/Wanted Goods, 2 for Office Utility/Equipments, 3 for Insurance, 4 for Lab, 5 for Mandatory Provident Fund (MPF), 6 for Charity, 7 for Rent. Do not answer anything else."
+    question = "what is the categorise the goods/services in the receipt? answer 1 for Entertainment/Food/luxurious Goods, 2 for Office Utility/Equipments/Tools, 3 for Insurance, 4 for Lab, 5 for Mandatory Provident Fund (MPF), 6 for Charity, 7 for Rent. Do not answer anything else."
     answer = ask_model(image, question, model, tokenizer, processor)
     print(f"Category from model: {answer}")
     answer = answer.split("\n")[-1].strip().capitalize()

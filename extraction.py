@@ -10,8 +10,8 @@ def extract_receipt_date(image: Image.Image, model, tokenizer, processor) -> Opt
     Input: PIL Image, model, tokenizer, processor
     Output: datetime.date object or None if not found
     '''
-
-    question = ("what is the date of the receipt? answer with the date in YYYY-MM-DD format only.")
+    
+    question = ("what is the date of the receipt? please only answer in YYYY-MM-DD format.")
     answer = ask_model(image, question, model, tokenizer, processor)
     print(f"Date from model: {answer}")
     match = re.search(r"\d{4}-\d{2}-\d{2}", answer)

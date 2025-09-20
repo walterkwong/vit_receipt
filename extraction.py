@@ -29,7 +29,7 @@ def extract_payee(image: Image.Image, model, tokenizer, processor) -> str:
     Output: Payee as a string
     '''
 
-    question = "who is this payment going to? answer with the name of the company only."
+    question = "who is this payment going to? the answer should be a company name only. Do not answer anything else other than the name."
     answer = ask_model(image, question, model, tokenizer, processor)
     print(f"Payee from model: {answer}")
     answer = answer.split("\n")[-1].strip().capitalize()

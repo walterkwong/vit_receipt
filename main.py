@@ -13,6 +13,7 @@ from extraction import (
 from transformers import AutoModel, AutoTokenizer, AutoProcessor
 
 import easygui
+import time
 
 def prompt_folder():
     '''
@@ -59,20 +60,32 @@ def main():
     # Process each image file
     for file_path in files:
         print(f"\n\nProcessing file: {file_path}")
+        start_time = time.time()
+
         image = Image.open(file_path)
         image = ensure_rgb(image)
         image = image_enhance(image)
+        image = image.resize((640, 480), Image.LANCZOS)
 
-        date = extract_receipt_date(image, model, tokenizer, processor)
-        payee = extract_payee(image, model, tokenizer, processor)
-        total_amount = extract_total_cost(image, model, tokenizer, processor)
-        category = categorize_goods(image, model, tokenizer, processor)
+        with torch.no_grad():
+            date = extract_receipt_date(image, model, tokenizer, processor)
+            payee = extract_payee(image, model, tokenizer, processor)
+            total_amount = extract_total_cost(image, model, tokenizer, processor)
+            category = categorize_goods(image, model, tokenizer, processor)
 
         results["Date"].append(date if date else "N/A")
         results["Payee"].append(payee if payee else "N/A")
         results["Total Amount"].append(total_amount if total_amount else 0.0)
         results["Category"].append(category if category else "Other")
         results["File"].append(os.path.basename(file_path))
+
+        end_time = time.time()
+        elapsed = end_time - start_time
+        print(f"Time taken for {os.path.basename(file_path)}: {elapsed:.2f} seconds")
+
+        # Clear cache after each iteration
+        torch.cuda.empty_cache()
+        del image
 
     # Save results to CSV
     df = pd.DataFrame(results)

@@ -13,9 +13,12 @@ def image_enhance(image: Image.Image) -> Image.Image:
     return image
     
 def resize_image(image: Image.Image, size=(640, 480)) -> Image.Image:
-    image.thumbnail(size, Image.LANCZOS)
-    new_img = Image.new("RGB", size, (255, 255, 255))
-    left = (size[0] - image.width) // 2
-    top = (size[1] - image.height) // 2
-    new_img.paste(image, (left, top))
-    return new_img
+    if image.width <= size[0] and image.height <= size[1]:
+        return image
+    else:
+        image.thumbnail(size, Image.LANCZOS)
+        new_img = Image.new("RGB", size, (255, 255, 255))
+        left = (size[0] - image.width) // 2
+        top = (size[1] - image.height) // 2
+        new_img.paste(image, (left, top))
+        return new_img
